@@ -28,7 +28,7 @@
 		  <param name="laser_likelihood_max_dist" value="2.0"/>
 		  <param name="update_min_d" value="3"/>
 		  <param name="update_min_a" value="1"/>
-		  <param name="odom_frame_id" value="AMR"/>
+		  <param name="odom_frame_id" value="odom"/>
 		  <param name="global_frame_id" value="world" />
 		  <param name="base_frame_id" value="AMR" />
 		  <param name="resample_interval" value="1"/>
