@@ -1,0 +1,13 @@
+<launch>
+  <node pkg="sensor_msgs" type="sensor_msgs/LaserScan" name="scan" output="screen">
+    
+  </node>
+
+  <node pkg="nav_msgs" type="nav_msgs/Odometry" name="odom" output="screen">
+    
+  </node>
+
+  <node pkg="tf" type="tf/StampedTransform" name="tf" output="screen">
+    
+  </node>
+</launch>

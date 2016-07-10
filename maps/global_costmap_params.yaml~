@@ -1,0 +1,8 @@
+global_costmap:
+  rolling_window: false
+  track_unknown_space: true
+  static_map: true
+
+plugins:
+ - {name: static_map_layer, type: "costmap_2d::StaticLayer"}
+

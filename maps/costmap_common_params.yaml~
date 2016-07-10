@@ -1,0 +1,16 @@
+footprint: [[-0.1,-0.2],[-0.1,0.2],[0.1,0.2],[0.1,-0.2]]
+robot_base_frame: AMR
+global_frame: world
+update_frequency: 1.0
+
+#plugins: []
+plugins:
+ - {name: obstacle_layer,  type: "costmap_2d::ObstacleLayer"}
+ - {name: inflation_layer,   type: "costmap_2d::InflationLayer"}
+obstacle_layer:
+    observation_sources: scan
+    scan: {data_type: LaserScan, sensor_frame: scan, clearing: true, marking: true, topic: scan, obstacle_range: 9, raytrace_range: 9}
+
+inflation_layer: 
+   inflation_radius: 0.50
+
