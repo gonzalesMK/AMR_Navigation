@@ -7,15 +7,18 @@
 
   <node name="kinecontroller" pkg="kinecontroller" type="kinecontroller" /> 
   
-  <!--- Run AMCL -->
+  <node name="tf" pkg="tf" type="static_transform_publisher" args="0 0 0 0 0 0 world odom 50" />
+
+   <!--- Run AMCL -->
   <include file="$(find AMR__2dnav)/amcl.launch" />
   <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
-    <remap from="map" to="/map" />
     <rosparam file="$(find       AMR__2dnav)/maps/costmap_common_params.yaml" command="load" ns="global_costmap" />
     <rosparam file="$(find       AMR__2dnav)/maps/costmap_common_params.yaml" command="load" ns="local_costmap" />
     <rosparam file="$(find       AMR__2dnav)/maps/local_costmap_params.yaml" command="load" />
     <rosparam file="$(find       AMR__2dnav)/maps/global_costmap_params.yaml" command="load" />
     <rosparam file="$(find       AMR__2dnav)/maps/base_local_planner_params.yaml" command="load" />
+    <rosparam file="$(find       AMR__2dnav)/maps/move_base_params.yaml" command="load" />
+    <rosparam file="$(find       AMR__2dnav)/maps/base_global_planner_params .yaml" command="load" />
   </node>
 
     <node name="rviz" pkg="rviz" type="rviz" args="-d $(find       AMR__2dnav)/AMR.rviz" />

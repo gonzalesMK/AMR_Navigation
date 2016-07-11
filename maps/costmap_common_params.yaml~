@@ -1,16 +1,28 @@
 footprint: [[-0.2,-0.1],[-0.2,0.1],[0.2,0.1],[0.2,-0.1]]
-robot_base_frame: AMR
-global_frame: world
-update_frequency: 1.0
 
-plugins: []
-plugins:
- - {name: obstacle,  type: "costmap_2d::ObstacleLayer"}
- - {name: inflation,   type: "costmap_2d::InflationLayer"}
-obstacle:
-    observation_sources: scan
-    scan: {data_type: LaserScan, sensor_frame: scan, clearing: true, marking: true, topic: scan, obstacle_range: 9, raytrace_range: 9, min_obstacle_height: - 5 }
+map_type: obstacle
 
-inflation: 
-   inflation_radius: 0.50
+obstacle_layer:
+  enabled:              true
+  track_unknown_space:  true    #true needed for disabling global path planning through unknown space
+  obstacle_range: 8.0
+  raytrace_range: 8.0
+  observation_sources:  scan
+  scan:
+    data_type: LaserScan
+    topic: scan
+    marking: true
+    clearing: true
+    min_obstacle_height: -5
+    max_obstacle_height: 5
 
+
+#cost_scaling_factor and inflation_radius were now moved to the inflation_layer ns
+inflation_layer:
+  enabled:              true
+  cost_scaling_factor:  5.0  # exponential rate at which the obstacle cost drops off (default: 10)
+  inflation_radius:     0.5  # max. distance from an obstacle at which costs are incurred for planning paths.
+
+static_layer:
+  enabled:              true
+  
