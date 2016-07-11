@@ -190,7 +190,3 @@ include_directories(
 
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
-
-
-add_executable(kinecontroller src/kinecontroller.cpp)
-target_link_libraries(kinecontroller ${catkin_LIBRARIES})
