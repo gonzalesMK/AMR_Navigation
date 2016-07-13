@@ -5,7 +5,7 @@
   <!-- Run the map server -->
   <node name="map_server" pkg="map_server" type="map_server" args="$(find       AMR__2dnav)/maps/map.yaml _frame_id:=world"/>
 
-  <node name="kinecontroller" pkg="kinecontroller" type="kinecontroller" /> 
+  <node name="kinecontroller" pkg="AMR__2dnav" type="kinecontroller" /> 
   
   <node name="tf" pkg="tf" type="static_transform_publisher" args="0 0 0 0 0 0 world odom 50" />
 

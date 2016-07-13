@@ -2,7 +2,7 @@ global_costmap:
    global_frame: world
    robot_base_frame: AMR
    update_frequency: 1.0
-   publish_frequency: 0.5
+   publish_frequency: 0.3
    static_map: true
    transform_tolerance: 0.5
    plugins:
