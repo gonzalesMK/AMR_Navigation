@@ -8,7 +8,7 @@
   <node name="kinecontroller" pkg="AMR__2dnav" type="kinecontroller" /> 
   
    <!--- Run AMCL -->
-  <include file="$(find AMR__2dnav)/amcl.launch" />
+  <!--- include file="$(find AMR__2dnav)/amcl.launch" -->
   <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
     <rosparam file="$(find       AMR__2dnav)/maps/costmap_common_params.yaml" command="load" ns="global_costmap" />
     <rosparam file="$(find       AMR__2dnav)/maps/costmap_common_params.yaml" command="load" ns="local_costmap" />
