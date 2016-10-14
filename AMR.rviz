@@ -4,8 +4,11 @@ Panels:
     Name: Displays
     Property Tree Widget:
       Expanded:
+        - /Local plan1
+        - /Local map1
+        - /Local Cost1
         - /Odometry1
-      Splitter Ratio: 0.236453
+      Splitter Ratio: 0.482558
     Tree Height: 524
   - Class: rviz/Selection
     Name: Selection
@@ -51,11 +54,11 @@ Visualization Manager:
       Class: rviz/Map
       Color Scheme: map
       Draw Behind: false
-      Enabled: true
+      Enabled: false
       Name: Global map
       Topic: /move_base/global_costmap/costmap
       Unreliable: false
-      Value: true
+      Value: false
     - Alpha: 1
       Class: rviz/Polygon
       Color: 255; 0; 4
@@ -106,7 +109,7 @@ Visualization Manager:
         X: 0
         Y: 0
         Z: 0
-      Topic: /move_base/TrajectoryPlannerROS/local_plan
+      Topic: /Costmap
       Unreliable: false
       Value: false
     - Alpha: 1
@@ -128,11 +131,11 @@ Visualization Manager:
       Class: rviz/Map
       Color Scheme: costmap
       Draw Behind: true
-      Enabled: false
+      Enabled: true
       Name: Local map
-      Topic: /move_base/local_costmap/costmap
+      Topic: /Costmap
       Unreliable: false
-      Value: false
+      Value: true
     - Alpha: 0.2
       Autocompute Intensity Bounds: true
       Autocompute Value Bounds:

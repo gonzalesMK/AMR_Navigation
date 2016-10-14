@@ -1,4 +1,5 @@
-TrajectoryPlannerROS:
+local_potential_field/localPotentialField:
+#TrajectoryPlannerROS:
   max_vel_x: 30.0
   min_vel_x: 0.0
   max_vel_theta: 20.0
@@ -22,5 +23,5 @@ TrajectoryPlannerROS:
   global_frame_id: world
 
   oscillation_reset_dist: 0.2
-  sim_time: 2
-  heading_lookahead: 0.5
+  sim_time: 1
+  heading_lookahead: 0.3

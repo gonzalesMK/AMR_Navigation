@@ -1,0 +1,190 @@
+04/07 - -----------------------------------------------------------------------------------------------------------
+Encontrei um tutorial de como criar um grid em V-REP :http://www.forum.coppeliarobotics.com/viewtopic.php?f=9&t=2847
+
+Novas Metas: 	estudar/descobrir como usar gmapping     
+		seguir o tutorial e tentar implementar um robo funcional // Feito!... entretando não totalmente funcional
+		estudar/descobrir como usar TF
+		Aprendendo a usar rviz
+
+--------- Como conseguir uma mapa: -------------------
+Seguir o tutorial em http://www.forum.coppeliarobotics.com/viewtopic.php?f=9&t=2847 para pegar os scripts do carrinho e do sensor
+	
+	* Usando o rviz:	Fixed_frame = /odom
+				map = /map				
+	
+	* Principais comandos: 	$ rosrun tf static_transform_publisher 0.2 0.0 0.1 0.0 0.0 0.0 base_link base_scan 50  /// Cria um tf (?)
+				$ rosrun gmapping slam_gmapping scan:=base_scan		/// Adiciona um scan no tópico /base_scan ( pode mudar para /vrep/front_scan por exemplo)		
+				$ rosrun map_server map_saver                             /// Salva o mapa
+
+
+	*Comentar linhas no sensor:      --parentTf=simGetObjectHandle("parentTf#")  --get handle to parent object in tf tree. Change this to your needs
+					 --tfname=simExtROS_enablePublisher('tf',1,simros_strmcmd_get_transform ,modelHandle,parentTf,'') --publish the tf
+
+	*Add linhas no script:     braitenbergL={-0.2,-0.4,-0.6,-0.8,-1,-1.2,-1.4,-1.6, 0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0}
+				   braitenbergR={-1.6,-1.4,-1.2,-1,-0.8,-0.6,-0.4,-0.2, 0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0}
+				   v0=2
+				   
+				   -- Added from here --------------------------------------------------------------------------
+				   -- Stop motor for initialization
+				     simSetJointTargetVelocity(motorLeft,0.0)
+				     simSetJointTargetVelocity(motorRight,0.0)
+
+				     robotPioneer=simGetObjectHandle('base_link')
+
+				     rpName=simExtROS_enablePublisher('/odom',1,simros_strmcmd_get_odom_data,robotPioneer,-1,'') 
+				     tfname=simExtROS_enablePublisher('tf',1,simros_strmcmd_get_transform ,robotPioneer,-1,'base_link%odom') 
+				     cmdTopic=simExtROS_enableSubscriber('/turtle1/cmd_vel',1,simros_strmcmd_set_twist_command,-1,-1,'twistSignal')
+				   -- Added to here ------------------------------------------------------------------------------
+				   end 
+				   if (sim_call_type==sim_childscriptcall_cleanup) then 
+                                    ...
+				    ...
+                                    ...					
+				   for i=1,16,1 do
+				      vLeft=vLeft+braitenbergL[i]*detect[i]
+				      vRight=vRight+braitenbergR[i]*detect[i]
+				   end
+				  
+				    -- Added from here -----------------------------------------------------
+				   vLeft = 0.0
+				   vRight = 0.0
+				   
+				   packedData=simGetStringSignal('twistSignal')         
+				   if(packedData) then
+				      twistData=simUnpackFloats(packedData)
+				      -- Do something with the twist data
+				      --print(twistData[1], twistData[2], twistData[3], twistData[4], twistData[5], twistData[6])
+				      linearx = twistData[1]
+				      angularz = twistData[6]
+				      robotBase = 0.315
+				      vLeft = linearx - (robotBase / 2)*angularz
+				      vRight = linearx + (robotBase / 2)*angularz
+				      print(vLeft, vRight)
+				   end
+				   -- Added to here ----------------------------------------------------------------------
+
+				   simSetJointTargetVelocity(motorLeft,vLeft)
+				   simSetJointTargetVelocity(motorRight,vRight)
+		Obs: é útil usar o comando: $ rosrun turtlesim turtle_teleop_key para controlar o robo
+
+05/07 ---------------------------------------------------------------------------------------------------------------------------------------
+Aprendendo a usar tf : http://wiki.ros.org/tf/Tutorials   -- (Possuem alguns vídeos muitos bons)
+
+	* Para encontrar a relação das coordenadas, usar:	 $ rosrun rqt_tf_tree rqt_tf_tree ( Ou, apenas $ rqt & )
+
+	* "Escutar" um referencial:                              $ rosrun tf tf_echo [reference_frame] [target_frame]
+
+
+A biblioteca tf funciona para facilitar as transformações entre eixos de coordenadas. Entretanto, por simplicidade, os tópicos .../pose também enviam coordenadas que 
+serviriam para a movimentação. Tal afirmação se comprova pois os a classe tf::Transform recebe os dados de .../pose
+
+	* Um tf broadcaster precisa, basicamente, dos comandos:	  static tf::TransformBroadcaster br;         /// Cria um broadcaster
+								  tf::Transform transform;			/// Cria um objeto Transform	
+								  transform.setOrigin( tf::Vector3(msg->x, msg->y, 0.0) );		/// Coordenadas do eixo
+								  tf::Quaternion q;							/// Cria um Quartenion
+								  q.setRPY(0, 0, msg->theta);				
+								  transform.setRotation(q);
+								  br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), "world", turtle_name));  // Envia o tf
+
+	* Um tf listener precisa, basicamente, dos comandos:	  tf::TransformListener listener;     // Cria o objeto Listener
+								  while (node.ok()){                  // O listener precisa estar dentro de um loop
+								    tf::StampedTransform transform;   // Criam um StampedTransform ( objeto pelo qual tf troca informações )
+								    try{                              // A recepção precisa ser feita usando-se try/catch
+								      listener.lookupTransform("/turtle2", "/turtle1",ros::Time(0), transform);   // A ordem é: Queremos o transform deste frame - turtle2 - em relação à este - turtle1- na ordem cronológia e armezene-a em 'transform'  
+								    }
+								    catch (tf::TransformException &ex) {
+								      ROS_ERROR("%s",ex.what());
+								      ros::Duration(1.0).sleep();
+								      continue;
+								    } 	
+									
+	*Obs: notar que a classe StampedTransform é apenas um Transform que possui é rastreado pelo tempo e que se relacionam com um parent frame
+	
+	* Os comandos para rastrear os Tf são: 	rosrun tf tf_echo   // mostra os frames
+						rosrun tf tf_monitor // mostra todos os tf broadcaster
+						roswtf   // debug plugin
+						rosrun tf view_frames // Escuta a transmissão por 5 s e gera um pdf
+
+
+06/07 ----------------------------------------------------------------------------------------------------------------------------------------------------------
+Várias mudanças na ros:
+	* Inicio da utilização da RosInterface:     http://www.coppeliarobotics.com/helpFiles/en/rosInterfaceApi.htm   ( Funções do Ros Interface) 
+		    				    http://www.coppeliarobotics.com/helpFiles/en/rosTutorialIndigo.htm (Um bom tutorial de utilização com scritps no V-Rep)
+
+	* API functions para ROS: 	http://www.coppeliarobotics.com/helpFiles/en/apiFunctions.htm ( Dicionário das Funções de V-Rep)
+	
+	* Re-instalação do catkin workspace : 	    Deve-se utilizar o comando catkin build a partir de agora
+						    Instalação dos pacotes RosInterface
+
+	* Foi criado um pequeno script em bug_final: 	Já está implementado conforme RosInterface -- Responde a comandos nos tópicos /AMR/leftMotorSpeed e /AMR/leftMotorSpeed
+												   -- Envia um protocolo Tf e Odom
+							Possui um sensor já funcional	
+						 	Ainda NÃO é capaz de trabalhar com Tf ... provavelmente falta algum código escrito para gerenciar tudo
+
+	* Para criar um mapa, pode-se utilizar, também, uma rosbag: http://wiki.ros.org/slam_gmapping/Tutorials/MappingFromLoggedData
+
+	* Falta entender a utilidade do código: $ rosrun tf static_transform_publisher 0.2 0.0 0.1 0.0 0.0 0.0 base_link base_scan 50  
+						$ rosrun gmapping slam_gmapping scan:=base_scan			
+
+	* AMR Script e Laser script: backup 1 
+	
+	* Dificuldades do dia:  dificuldade para implementar em LUA -- comandos, arrays, etc...
+				dificuldade para programar conforme a RosInterface: é necessário criar 'tables' para as mensagens (ex: Headers, Twist, covariance.., na msg Odom) 
+
+07/07 =====================================================================================================================================================================
+
+	* Descobri o modelo RosInterfaceHelper :    Permite o controle do V-Rep diretamente pelos tópicos do ROS ( start/pauses/finish simulation ... + time)
+	
+	* Descrição do gmapping: http://wiki.ros.org/gmapping
+
+	* Comando a ser utilizado na cena Bug_final:  rosrun gmapping slam_gmapping scan:=scan _odom_frame:=AMR _base_frame:=AMR _map_frame:=world
+
+	
+	* FUNCIONOU!!! Consertei boa parte dos erros que estavam no primeiro tutorial que segui. O primeiro mapa foi bem precário, não acertei os frames dos tfs.
+	  Um backup dos scripts está em BackUp 2  
+	
+	*Para conseguir o mapa, é necessário usar o comando: 	rosparam set use_sim_time true
+								 rosrun gmapping slam_gmapping scan:=scan _odom_frame:=AMR _base_frame:=AMR _map_frame:=world _xmin:=0 _xmax:=10 _ymin:=0 _ymax:=15
+								rosrun map_server map_saver 
+								rviz         --- visualizar o mapa enquanto está sendo processado
+08/07 ===========================================================================================================================================================================
+
+	* Utilização do script teleop para controle do robo: rosrun teleop_twist_keyboard teleop_twist_keyboard.py ( publica em /cmd_vel)
+	
+	* Conclui o trabalho com o gmapping. Tudo parece estável e funcional. 
+
+	* A meta agora é conseguir utilizar o mapa gerado no Navigation do Ros, parecem que tem dois pacotes que suprem as necessidades: 	http://wiki.ros.org/navigation - 
+																		http://wiki.ros.org/mrpt_navigation
+
+	* Um bom tutorial e resumo está em: 	http://wiki.ros.org/navigation/Tutorials/RobotSetup
+
+	* Os erros do Primeiro mapa gerado são: Erro de configuração do gmapping - o tf da odomotry e do base_link não apontavam para o robo
+	
+	* Além disso, aprimorou-se o fato de que a transformação não precisa ser mais feita pela linha de comando ( usando static transformer) pois o script do V-rep trata
+	  os tfs adequadamente - o sensor é naturalmente ligado ao robô
+
+	* Robo com odometry  nav_msgs 
+
+	* Documentação costmap_2d:  http://wiki.ros.org/costmap_2d
+
+
+09/07 ===============================================================================================================================================================================
+
+
+	* Configuração dos costmaps: local_costmap_params.yalm, global_costmap_params.yaml, costmap_common_params.yaml
+
+	* Criação dos launchers: 	 amcl.launch  e move_base.launch
+
+	* Exemplo importante: 	http://answers.ros.org/question/10071/navigation-base-controller-output/
+				http://answers.ros.org/question/143891/how-to-show-the-robot-footprint-in-new-hydro-costmap-system/
+
+	* Debugando...  ainda falta consertar o obstacle e inflation layer
+
+10/07 ================================================================================================================================================================================
+	
+	* O move_Base está funcionando de maneira estável. 
+
+	* Foi feita a troca do Global Planner:  TrajectoryPlannerROS -> Nav_core GlobalPlanner ( dijkstra )
+
+ 	* O modo A* não está funcionando: erro ao gerar mapa
+ 
