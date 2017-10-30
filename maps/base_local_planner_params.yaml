@@ -1,27 +1,17 @@
-#local_potential_field/localPotentialField:
-TrajectoryPlannerROS:
-  max_vel_x: 30.0
+/move_base/TebLocalPlannerROS:
+  max_vel_x: 2.0
   min_vel_x: 0.0
-  max_vel_theta: 20.0
-  min_vel_theta: -20.0
-  min_in_place_vel_theta: 0.4
-  
+  max_vel_theta: 2.0
+  min_vel_theta: -2.0
+  min_in_place_vel_theta: 0
+  max_vel_x_backwards: 1
+  free_goal_vel: true
 
-  acc_lim_theta: 10.0
-  acc_lim_x: 10.0
-  acc_lim_y: 10.0
-
-  meter_scoring : true
-  pdist_scale: 1.0
-  gdist_scale: 0.5
-  occdist_scale: 3.0
-  heading_scoring: false
-
-  holonomic_robot: false
-  publish_cost_grid_pc: true
+  acc_lim_theta: 1
+  acc_lim_x: 1
+  acc_lim_y: 1
 
   global_frame_id: world
 
-  oscillation_reset_dist: 0.2
   sim_time: 1
-  heading_lookahead: 0.3
+

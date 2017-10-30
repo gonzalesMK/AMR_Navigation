@@ -16,7 +16,6 @@
     <rosparam file="$(find       AMR__2dnav)/maps/global_costmap_params.yaml" command="load" />
     <rosparam file="$(find       AMR__2dnav)/maps/base_local_planner_params.yaml" command="load" />
     <rosparam file="$(find       AMR__2dnav)/maps/move_base_params.yaml" command="load" />
-    <rosparam file="$(find       AMR__2dnav)/maps/base_global_planner_params .yaml" command="load" />
   </node>
 
     <node name="rviz" pkg="rviz" type="rviz" args="-d $(find       AMR__2dnav)/AMR.rviz" />
