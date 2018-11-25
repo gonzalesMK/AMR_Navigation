@@ -15,3 +15,7 @@
 
   sim_time: 1
 
+  no_inner_iterations: 10
+  footprint_model: # types: "point", "circular", "line", "two_circles", "polygon"
+    - type: "polygon"
+    - vertices: [[-0.2,-0.1],[-0.2,0.1],[0.2,0.1],[0.2,-0.1]]

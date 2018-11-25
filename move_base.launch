@@ -8,7 +8,16 @@
   <node name="kinecontroller" pkg="AMR__2dnav" type="kinecontroller" /> 
   
    <!--- Run AMCL -->
-  <!--- include file="$(find AMR__2dnav)/amcl.launch" -->
+  <node pkg="amcl" type="amcl" name="amcl" output="screen">
+		  <param name="odom_frame_id" value="odom"/>
+		  <param name="global_frame_id" value="map" />
+		  <param name="base_frame_id" value="AMR" />
+		  <param name="use_map_topic" value="true"/>
+		  <param name="initial_pose_x" value='6.7253446579'/>
+		  <param name="initial_pose_y" value='4.54997968674'/>
+		  <param name="initial_pose_a" value='1.57'/>
+  </node>
+  
   <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
     <rosparam file="$(find       AMR__2dnav)/maps/costmap_common_params.yaml" command="load" ns="global_costmap" />
     <rosparam file="$(find       AMR__2dnav)/maps/costmap_common_params.yaml" command="load" ns="local_costmap" />

@@ -5,7 +5,7 @@
   <!-- Run the map server -->
   <node name="gmapping" pkg="gmapping" type="slam_gmapping">
     <param name='scan' value='scan'/>
-    <param name='odom_frame' value='world' />
+    <param name='odom_frame' value='odom' />
     <param name='base_frame' value='AMR' />
     <param name='map_frame'  value='map' />
     <param name='xmin' value='-1.0' />
@@ -22,7 +22,8 @@
 
   <node name="kinecontroller" pkg="AMR__2dnav" type="kinecontroller" /> 
   
-  <!--- include file="$(find AMR__2dnav)/amcl.launch" -->
+  <!-- include file="$(find AMR__2dnav)/amcl.launch" -->
+
   <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
     <rosparam file="$(find       AMR__2dnav)/maps/costmap_common_params.yaml" command="load" ns="global_costmap" />
     <rosparam file="$(find       AMR__2dnav)/maps/costmap_common_params.yaml" command="load" ns="local_costmap" />
