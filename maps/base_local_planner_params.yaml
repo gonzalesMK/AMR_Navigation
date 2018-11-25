@@ -1,8 +1,8 @@
 /move_base/TebLocalPlannerROS:
-  max_vel_x: 2.0
+  max_vel_x: 1.0
   min_vel_x: 0.0
-  max_vel_theta: 2.0
-  min_vel_theta: -2.0
+  max_vel_theta: 1
+  min_vel_theta: -1.0
   min_in_place_vel_theta: 0
   max_vel_x_backwards: 1
   free_goal_vel: true
@@ -11,7 +11,7 @@
   acc_lim_x: 1
   acc_lim_y: 1
 
-  global_frame_id: world
+  global_frame_id: map
 
   sim_time: 1
 
